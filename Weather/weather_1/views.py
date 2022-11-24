@@ -20,14 +20,15 @@ def index(request):
 
     for city in cities:
         res = requests.get(url.format(city.name)).json()
-        city_info = {
-            'city': city.name,
-            'temp': res['main']['temp'],
-            'press': res['main']['pressure'],
-            'hum': res['main']['humidity'],
-            'icon': res['weather'][0]['icon']
-        }
-        all_cities.append(city_info)
+        if res['cod'] == 200 and city.name not in (c['city'] for c in all_cities):
+            city_info = {
+                'city': city.name,
+                'temp': res['main']['temp'],
+                'press': res['main']['pressure'],
+                'hum': res['main']['humidity'],
+                'icon': res['weather'][0]['icon']
+            }
+            all_cities.append(city_info)
 
     context = {'all_info': all_cities, 'form': form}
     return render(request, 'weather_1/index.html', context)
